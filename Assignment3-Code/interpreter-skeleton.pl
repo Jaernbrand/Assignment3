@@ -4,12 +4,13 @@ Peter Idestam-Almquist, 2014-12-23.
 ***/
 
 :- [tokenizer].
+:- [parser].
 
 run(InputFile,OutputFile):-
 	tokenize(InputFile,Program),
-	parse(ParseTree,Program,[]),
-	evaluate(ParseTree,[],VariablesOut), 
-	output_result(OutputFile,ParseTree,VariablesOut).
+	parse(ParseTree,Program,[])/*,*/
+	%evaluate(ParseTree,[],VariablesOut), 
+	/*output_result(OutputFile,ParseTree,VariablesOut)*/.
 
 output_result(OutputFile,ParseTree,Variables):- 
 	open(OutputFile,write,OutputStream),
