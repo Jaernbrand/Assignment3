@@ -69,7 +69,7 @@ int([L|Lexemes]) :-
 
 validate_int(L):-
 	number_codes(L, Code),
-	valid_letter_range(Code).
+	valid_number_range(Code).
 
 valid_number_range([]).
 valid_number_range([Code|Rest]):-
