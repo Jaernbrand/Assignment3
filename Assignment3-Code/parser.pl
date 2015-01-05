@@ -1,21 +1,21 @@
 
-parse(Tree, Lexemes, VariablesOut) :- assign(Tree, Lexemes, VariablesOut).
+parse(Tree, Lexemes, VariablesOut) :- assign(Tree, Lexemes).
 
-assign(Tree, Lexemes, VariablesOut) :- 
+assign(Tree, Lexemes) :- 
 	id(Tree, Lexemes), 
-	eq(Tree, Lexemes), 
-	expr(Tree, Lexemes, VariablesOut), 
+	assignSign(Tree, Lexemes), 
+	expr(Tree, Lexemes), 
 	assignEnd(Tree, Lexemes).
 
-assignToken(Tree, [L | Lexemes]) :-
+assignSign(Tree, [L | Lexemes]) :-
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
 assignEnd(Tree, [L | Lexemes]) :- L
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
-expr(Tree, Lexemes, VariablesOut) :- term(Tree, Lexemes)
+expr(Tree, Lexemes) :- term(Tree, Lexemes)
 	term(Tree, Lexemes).
 
-expr(Tree, Lexemes, VariablesOut) :- term(Tree, Lexemes)
+expr(Tree, Lexemes) :- term(Tree, Lexemes)
 	term(Tree, Lexemes),
 	exprOperator(Tree, Lexemes),
 	expr(Tree, Lexemes).
@@ -60,11 +60,15 @@ valid_letter_range([]).
 valid_letter_range([Code|Rest]):-
 	Code >= 97,
 	Code =< 122,
-	within_range(Rest).
+	valid_letter_range(Rest).
 
 
+<<<<<<< HEAD
 int([L|Lexemes]) :-
 	validate_int(L).
+=======
+int(Tree, [L | Lexemes]) /*:- L '0-9'*/.
+>>>>>>> origin/master
 
 validate_int(L):-
 	number_codes(L, Code),
