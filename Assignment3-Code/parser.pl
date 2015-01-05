@@ -49,6 +49,19 @@ leftParen(Tree, [L | Lexemes]) :-
 rightParen(Tree, [L | Lexemes]) :- 
 	atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
 
-id(Tree, [L | Lexemes]) :- L 'a-z'.
+id(Tree, [L | Lexemes]) :-
+	validate_id([L]).	
+
+validate_id([L]):-
+	atom_codes(L, Code),
+	valid_letter_range(Code).
+
+valid_letter_range([]).
+valid_letter_range([Code|Rest]):-
+	Code >= 97,
+	Code =< 122,
+	within_range(Rest).
+
+
 int(Tree, [L | Lexemes]) :- L '0-9'.
 
