@@ -1,2 +1,2 @@
 
-parse().
+parse(Tree, Lexemes, EmptList).
