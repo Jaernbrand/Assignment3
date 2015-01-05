@@ -63,12 +63,9 @@ valid_letter_range([Code|Rest]):-
 	valid_letter_range(Rest).
 
 
-<<<<<<< HEAD
+
 int([L|Lexemes]) :-
 	validate_int(L).
-=======
-int(Tree, [L | Lexemes]) /*:- L '0-9'*/.
->>>>>>> origin/master
 
 validate_int(L):-
 	number_codes(L, Code),
