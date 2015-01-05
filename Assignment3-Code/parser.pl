@@ -1,10 +1,10 @@
 
-parse(Tree, Lexemes, VariablesOut) :- assign(Tree, Lexemes, VariablesOut).
+parse(Tree, Lexemes VariablesOut) :- assign(Tree, Lexemes).
 
-assign(Tree, Lexemes, VariablesOut) :- 
+assign(Tree, Lexemes) :- 
 	id(Tree, Lexemes), 
 	eq(Tree, Lexemes), 
-	expr(Tree, Lexemes, VariablesOut), 
+	expr(Tree, Lexemes), 
 	assignEnd(Tree, Lexemes).
 
 assignToken(Tree, [L | Lexemes]) :-
@@ -12,10 +12,10 @@ assignToken(Tree, [L | Lexemes]) :-
 assignEnd(Tree, [L | Lexemes]) :- L
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
-expr(Tree, Lexemes, VariablesOut) :- term(Tree, Lexemes)
+expr(Tree, Lexemes) :- term(Tree, Lexemes)
 	term(Tree, Lexemes).
 
-expr(Tree, Lexemes, VariablesOut) :- term(Tree, Lexemes)
+expr(Tree, Lexemes) :- term(Tree, Lexemes)
 	term(Tree, Lexemes),
 	exprOperator(Tree, Lexemes),
 	expr(Tree, Lexemes).
