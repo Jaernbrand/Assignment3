@@ -9,7 +9,7 @@ assign(Tree, Lexemes) :-
 
 assignSign(Tree, [L | Lexemes]) :-
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
-assignEnd(Tree, [L | Lexemes]) :- L
+assignEnd(Tree, [L | Lexemes]) :- 
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
 expr(Tree, Lexemes) :- term(Tree, Lexemes)
