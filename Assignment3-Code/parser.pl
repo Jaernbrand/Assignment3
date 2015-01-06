@@ -12,44 +12,45 @@ assignSign([L | Lexemes], ['=']) :-
 assignEnd([L | Lexemes], [';']) :- 
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
-expr(Lexemes, ReturnNode) :- term(Tree, Lexemes)
-	term(Tree, Lexemes).
+expr(Lexemes, TermNode) :- 
+	term(Lexemes, TermNode).
 
-expr(Lexemes, ReturnNode) :- term(Tree, Lexemes)
-	term(Tree, Lexemes),
-	exprOperator(Tree, Lexemes),
-	expr(Tree, Lexemes).
+expr(Lexemes, [TermNode | OpNode | ExprNode]) :- 
+	term(Lexemes, TermNode),
+	exprOperator(Lexemes, OpNode),
+	expr(Lexemes, ExprNode).
 
-exprOperator([L | Lexemes], ReturnNode) :-
+exprOperator([L | Lexemes], ['+']) :-
 	atom_codes(L, [C | Codes]), C == 43. % 43 = '+' 
-exprOperator([L | Lexemes], ReturnNode) :-
+exprOperator([L | Lexemes], ['-']) :-
 	atom_codes(L, [C | Codes]), C == 45. % 45 = '-' 
 
-term(Lexemes, ReturnNode) :- factor(Tree, Lexemes) :-
-	factor(Tree, Lexemes).
+term(Lexemes, FactorNode) :- 
+	factor(Lexemes, FactorNode).
 
-term(Lexemes, ReturnNode) :- factor(Tree, Lexemes) :-
-	factor(Tree, Lexemes),
-	termOperator(Tree, Lexemes),
-	term(Tree, Lexemes).
+term(Lexemes, [FactorNode | OpNode | TermNode]) :-
+	factor(Lexemes, FactorNode),
+	termOperator(Tree, OpNode),
+	term(Lexemes, TermNode).
 
-termOperator([L | Lexemes], ReturnNode) :- 
+termOperator([L | Lexemes], ['*']) :- 
 	atom_codes(L, [C | Codes]), C == 42. % 42 = '*' 
-termOperator([L | Lexemes], ReturnNode) :-
+termOperator([L | Lexemes], ['/']) :-
 	atom_codes(L, [C | Codes]), C == 47. % 47 = '/' 
 
-factor(Lexemes, RetrunNode) :- id(Tree, Lexemes).
-factor(Lexemes, ReturnNode) :- 
-	leftParen(Lexemes),  
-	expr(Tree, Lexemes), 
-	rightParen(Lexemes).
+factor(Lexemes, IdNode) :- 
+	int(Lexemes, IdNode).
+factor(Lexemes, [LPNode | ExprNode | RPNode]) :- 
+	leftParen(LPNode),  
+	expr(Lexemes, ExprNode), 
+	rightParen(RPNode).
 
-leftParen([L | Lexemes], ReturnNode) :- 
+leftParen([L | Lexemes], ['(']) :- 
 	atom_codes(L, [C | Codes]), C == 40. % 40 = '('
-rightParen([L | Lexemes], ReturnNode) :- 
+rightParen([L | Lexemes], [')']) :- 
 	atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
 
-id([L | Lexemes], ReturnNode) :-
+id([L | Lexemes], [L]) :-
 	validate_id([L]).	
 
 validate_id([L]):-
@@ -64,7 +65,7 @@ valid_letter_range([Code|Rest]):-
 
 
 
-int([L|Lexemes]) :-
+int([L|Lexemes], [L]) :-
 	validate_int(L).
 
 validate_int(L):-
