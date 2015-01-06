@@ -5,14 +5,15 @@ Peter Idestam-Almquist, 2014-12-23.
 
 :- [tokenizer].
 :- [parser2].
+:- [evaluator].
 
 run(InputFile, /*ParseTree*/OutputFile):-
 	tokenize(InputFile,Program),
 	parse(ParseTree,Program,[]),
-	%evaluate(ParseTree,[],VariablesOut), 
-	output_result(OutputFile,ParseTree/*,VariablesOut*/).
+	evaluate(ParseTree,[],VariablesOut), 
+	output_result(OutputFile,ParseTree,VariablesOut).
 
-output_result(OutputFile,ParseTree/*,Variables*/):- 
+output_result(OutputFile,ParseTree,Variables):- 
 	open(OutputFile,write,OutputStream),
 	write(OutputStream,'PARSE TREE:'), 
 	nl(OutputStream), 
@@ -20,7 +21,7 @@ output_result(OutputFile,ParseTree/*,Variables*/):-
 	nl(OutputStream), 
 	write(OutputStream,'EVALUATION:'), 
 	nl(OutputStream), 
-	%write_list(OutputStream,Variables), 
+	write_list(OutputStream,Variables), 
 	close(OutputStream).
 	
 writeln_term(Stream,Tabs,int(X)):-
