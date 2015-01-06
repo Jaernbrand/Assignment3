@@ -4,6 +4,7 @@ Peter Idestam-Almquist, 2014-12-23.
 ***/
 
 :- [tokenizer].
+:- [parser].
 
 run(InputFile,OutputFile):-
 	tokenize(InputFile,Program),
