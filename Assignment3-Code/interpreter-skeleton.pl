@@ -4,7 +4,7 @@ Peter Idestam-Almquist, 2014-12-23.
 ***/
 
 :- [tokenizer].
-:- [parser].
+:- [parser2].
 
 run(InputFile, /*ParseTree*/OutputFile):-
 	tokenize(InputFile,Program),

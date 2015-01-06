@@ -1,65 +1,50 @@
 
-parse(ReturnNode, Lexemes, AssignTail) :- 
-	assign(Lexemes, ReturnNode, AssignTail),
-	AssignTail == [].
+%parse(assign()) --> assign().
 
-assign(Lexemes, [assignment, IdNode, AssignSignNode, ExprNode, AssignEndNode], EndTail) :- 
-	id(Lexemes, IdNode, IdTail),
-	assignSign(IdTail, AssignSignNode, SignTail), 
-	expr(SignTail, ExprNode, ExprTail), 
-	assignEnd(ExprTail, AssignEndNode, EndTail).
+parse(assign(Ident, Op, Token, End)) --> 
+	id(Ident), 
+	opAssign(Op), 
+	expr(Token), 
+	assignEnd(End).
 
-assignSign([L | Lexemes], ['='], Lexemes) :-
-	atom(L),
-	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
-assignEnd([L | Lexemes], [';'], Lexemes) :- 
-	atom(L),
-	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
+opAssign('=') --> [=].
 
-expr(Lexemes, [TermNode], TermTail) :- 
-	term(Lexemes, TermNode, TermTail).
+assignEnd(';') --> [;]. 
 
-expr(Lexemes, [TermNode, OpNode, ExprNode], ExprTail) :- 
-	term(Lexemes, TermNode, TermTail),
-	exprOperator(TermTail, OpNode, OpTail),
-	expr(OpTail, ExprNode, ExprTail).
+expr(expr(Token)) --> 
+	term(Token).
 
-exprOperator([L | Lexemes], ['+'], Lexemes) :-
-	atom(L), 
-	atom_codes(L, [C | Codes]), C == 43. % 43 = '+' 
-exprOperator([L | Lexemes], ['-'], Lexemes) :-
-	atom(L),
-	atom_codes(L, [C | Codes]), C == 45. % 45 = '-' 
+expr(expr(TermToken, Op, ExprToken)) --> 
+	term(TermToken),
+	exprOperator(Op),
+	expr(ExprToken).
 
-term(Lexemes, [FactorNode], FactorTail) :- 
-	factor(Lexemes, FactorNode, FactorTail).
+exprOperator('+') --> [+].
+exprOperator('-') --> [-].
 
-term(Lexemes, [FactorNode, OpNode, TermNode], TermTail) :-
-	factor(Lexemes, FactorNode, FactorTail),
-	termOperator(FactorTail, OpNode, OpTail),
-	term(OpTail, TermNode, TermTail).
+term(term(Token)) --> 
+	factor(Token).
 
-termOperator([L | Lexemes], ['*'], Lexemes) :- 
-	atom(L), 
-	atom_codes(L, [C | Codes]), C == 42. % 42 = '*' 
-termOperator([L | Lexemes], ['/'], Lexemes) :-
-	atom(L),
-	atom_codes(L, [C | Codes]), C == 47. % 47 = '/' 
+term(term(FactorToken, Op, TermToken)) --> 
+	factor(FactorToken),
+	termOperator(Op),
+	term(TermToken).
 
-factor(Lexemes, [IntNode], IntTail) :- 
-	int(Lexemes, IntNode, IntTail).
-factor(Lexemes, [LPNode,  ExprNode, RPNode], RightParTail) :- 
-	leftParen(Lexemes, LPNode, LeftParTail),  
-	expr(LeftParTail, ExprNode, ExprTail), 
-	rightParen(ExprTail, RPNode, RightParTail).
+termOperator('*') --> [*]. 
+termOperator('/') --> [/].
 
-leftParen([L | Lexemes], ['('], Lexemes) :- 
-	 atom(L), atom_codes(L, [C | Codes]), C == 40. % 40 = '('
-rightParen([L | Lexemes], [')'], Lexemes) :- 
-	atom(L), atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
+factor(factor(N)) --> 
+	int(N).
+factor(factor(LP, Token, RP)) --> 
+	leftParen(LP),  
+	expr(Token), 
+	rightParen(RP).
 
-id([L | Lexemes], L, Lexemes) :-
-	validate_id(L).	
+leftParen('(') --> ['(']. 
+rightParen(')') --> [')']. 
+
+id(Ident, [Ident | Tail], Tail) :- 
+	validate_id(Ident).	
 
 validate_id(L):-
 	atom_codes(L, Code),
@@ -72,9 +57,8 @@ valid_letter_range([Code|Rest]):-
 	valid_letter_range(Rest).
 
 
-
-int([L|Lexemes], [L], Lexemes) :-
-	validate_int(L).
+int(N, [N | Tail], Tail) :-
+	number(N).
 
 validate_int(L):-
 	number(L),
