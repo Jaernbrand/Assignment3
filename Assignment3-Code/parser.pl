@@ -1,18 +1,22 @@
 
-parse(ReturnNode, Lexemes, VariablesOut) :- assign(Lexemes, ReturnNode).
+parse(ReturnNode, Lexemes, VariablesOut) :- 
+	assign(Lexemes, ReturnNode, AssignTail),
+	AssignTail == [].
 
-assign(Lexemes, [IdNode, AssignSignNode, ExprNode, AssignEndNode]) :- 
+assign(Lexemes, [IdNode, AssignSignNode, ExprNode, AssignEndNode], EndTail) :- 
 	id(Lexemes, IdNode, IdTail),
 	assignSign(IdTail, AssignSignNode, SignTail), 
 	expr(SignTail, ExprNode, ExprTail), 
-	assignEnd(ExprTail, AssignEndNode).
+	assignEnd(ExprTail, AssignEndNode, EndTail).
 
 assignSign([L | Lexemes], ['='], Lexemes) :-
+	atom(L),
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
-assignEnd([L | Lexemes], [';']) :- 
+assignEnd([L | Lexemes], [';'], Lexemes) :- 
+	atom(L),
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
-expr(Lexemes, TermNode, TermTail) :- 
+expr(Lexemes, [TermNode], TermTail) :- 
 	term(Lexemes, TermNode, TermTail).
 
 expr(Lexemes, [TermNode, OpNode, ExprNode], ExpreTail) :- 
@@ -21,11 +25,13 @@ expr(Lexemes, [TermNode, OpNode, ExprNode], ExpreTail) :-
 	expr(OpTail, ExprNode, ExprTail).
 
 exprOperator([L | Lexemes], ['+'], Lexemes) :-
+	atom(L), 
 	atom_codes(L, [C | Codes]), C == 43. % 43 = '+' 
 exprOperator([L | Lexemes], ['-'], Lexemes) :-
+	atom(L),
 	atom_codes(L, [C | Codes]), C == 45. % 45 = '-' 
 
-term(Lexemes, FactorNode, FactorTail) :- 
+term(Lexemes, [FactorNode], FactorTail) :- 
 	factor(Lexemes, FactorNode, FactorTail).
 
 term(Lexemes, [FactorNode, OpNode, TermNode], TermTail) :-
@@ -38,19 +44,19 @@ termOperator([L | Lexemes], ['*'], Lexemes) :-
 termOperator([L | Lexemes], ['/'], Lexemes) :-
 	atom_codes(L, [C | Codes]), C == 47. % 47 = '/' 
 
-factor(Lexemes, IdNode, IntTail) :- 
-	int(Lexemes, IdNode, IntTail).
+factor(Lexemes, [IntNode], IntTail) :- 
+	int(Lexemes, IntNode, IntTail).
 factor(Lexemes, [LPNode,  ExprNode, RPNode], RightParTail) :- 
 	leftParen(Lexemes, LPNode, LeftParTail),  
 	expr(LeftParTail, ExprNode, ExprTail), 
 	rightParen(ExprTail, RPNode, RightParTail).
 
 leftParen([L | Lexemes], ['('], Lexemes) :- 
-	atom_codes(L, [C | Codes]), C == 40. % 40 = '('
+	 atom(L), atom_codes(L, [C | Codes]), C == 40. % 40 = '('
 rightParen([L | Lexemes], [')'], Lexemes) :- 
-	atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
+	atom(L), atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
 
-id([L | Lexemes], [L], Lexemes) :-
+id([L | Lexemes], L, Lexemes) :-
 	validate_id(L).	
 
 validate_id(L):-
@@ -69,6 +75,7 @@ int([L|Lexemes], [L], Lexemes) :-
 	validate_int(L).
 
 validate_int(L):-
+	number(L),
 	number_codes(L, Code),
 	valid_number_range(Code).
 
