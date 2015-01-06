@@ -1,15 +1,15 @@
 
 parse(ReturnNode, Lexemes, VariablesOut) :- assign(Lexemes, ReturnNode).
 
-assign(Lexemes, ReturnNode) :- 
-	id(Tree, Lexemes), 
-	assignSign(Tree, Lexemes), 
-	expr(Tree, Lexemes), 
-	assignEnd(Tree, Lexemes).
+assign(Lexemes, [IdNode | AssignSignNode | ExprNode | AssignEndNode]) :- 
+	id(Lexemes, IdNode), 
+	assignSign(Lexemes, AssignSignNode), 
+	expr(Lexemes, ExprNode), 
+	assignEnd(Lexemes, AssignEndNode).
 
-assignSign([L | Lexemes], ReturnNode) :-
+assignSign([L | Lexemes], ['=']) :-
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
-assignEnd([L | Lexemes], ReturnNode) :- 
+assignEnd([L | Lexemes], [';']) :- 
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
 expr(Lexemes, ReturnNode) :- term(Tree, Lexemes)
