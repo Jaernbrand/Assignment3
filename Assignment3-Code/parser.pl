@@ -1,9 +1,9 @@
 
 parse(ReturnNode, Lexemes, VariablesOut) :- assign(Lexemes, ReturnNode).
 
-assign(Lexemes, [IdNode/*, AssignSignNode, ExprNode, AssignEndNode]) :- 
-	id(Lexemes, IdNode), 
-	%assignSign(Lexemes, AssignSignNode), 
+assign(Lexemes, [IdNode, AssignSignNode/*, ExprNode, AssignEndNode*/]) :- 
+	id(Lexemes, IdNode),
+	assignSign(Lexemes, AssignSignNode)%, 
 	%expr(Lexemes, ExprNode), 
 	/*assignEnd(Lexemes, AssignEndNode)*/.
 
