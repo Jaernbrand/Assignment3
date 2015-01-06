@@ -1,11 +1,11 @@
 
 parse(ReturnNode, Lexemes, VariablesOut) :- assign(Lexemes, ReturnNode).
 
-assign(Lexemes, [IdNode | AssignSignNode | ExprNode | AssignEndNode]) :- 
+assign(Lexemes, [IdNode/*, AssignSignNode, ExprNode, AssignEndNode]) :- 
 	id(Lexemes, IdNode), 
-	assignSign(Lexemes, AssignSignNode), 
-	expr(Lexemes, ExprNode), 
-	assignEnd(Lexemes, AssignEndNode).
+	%assignSign(Lexemes, AssignSignNode), 
+	%expr(Lexemes, ExprNode), 
+	/*assignEnd(Lexemes, AssignEndNode)*/.
 
 assignSign([L | Lexemes], ['=']) :-
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
@@ -15,7 +15,7 @@ assignEnd([L | Lexemes], [';']) :-
 expr(Lexemes, TermNode) :- 
 	term(Lexemes, TermNode).
 
-expr(Lexemes, [TermNode | OpNode | ExprNode]) :- 
+expr(Lexemes, [TermNode, OpNode, ExprNode]) :- 
 	term(Lexemes, TermNode),
 	exprOperator(Lexemes, OpNode),
 	expr(Lexemes, ExprNode).
@@ -28,9 +28,9 @@ exprOperator([L | Lexemes], ['-']) :-
 term(Lexemes, FactorNode) :- 
 	factor(Lexemes, FactorNode).
 
-term(Lexemes, [FactorNode | OpNode | TermNode]) :-
+term(Lexemes, [FactorNode, OpNode, TermNode]) :-
 	factor(Lexemes, FactorNode),
-	termOperator(Tree, OpNode),
+	termOperator(Lexemes, OpNode),
 	term(Lexemes, TermNode).
 
 termOperator([L | Lexemes], ['*']) :- 
@@ -40,10 +40,10 @@ termOperator([L | Lexemes], ['/']) :-
 
 factor(Lexemes, IdNode) :- 
 	int(Lexemes, IdNode).
-factor(Lexemes, [LPNode | ExprNode | RPNode]) :- 
-	leftParen(LPNode),  
+factor(Lexemes, [LPNode,  ExprNode, RPNode]) :- 
+	leftParen(Lexemes, LPNode),  
 	expr(Lexemes, ExprNode), 
-	rightParen(RPNode).
+	rightParen(Lexemes, RPNode).
 
 leftParen([L | Lexemes], ['(']) :- 
 	atom_codes(L, [C | Codes]), C == 40. % 40 = '('
@@ -51,9 +51,9 @@ rightParen([L | Lexemes], [')']) :-
 	atom_codes(L, [C | Codes]), C == 41. % 41 = ')'
 
 id([L | Lexemes], [L]) :-
-	validate_id([L]).	
+	validate_id(L).	
 
-validate_id([L]):-
+validate_id(L):-
 	atom_codes(L, Code),
 	valid_letter_range(Code).
 
