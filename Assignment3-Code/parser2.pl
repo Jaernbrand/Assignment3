@@ -1,7 +1,7 @@
 
 %parse(assign()) --> assign().
 
-parse(assign(Ident, Op, Token, End)) --> 
+parse(assign(Ident, Op, Token, End) --> 
 	ident(Ident), 
 	opAssign(Op), 
 	expr(Token), 

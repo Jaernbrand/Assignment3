@@ -7,11 +7,11 @@ Peter Idestam-Almquist, 2014-12-23.
 :- [parser2].
 :- [evaluator].
 
-run(InputFile, /*ParseTree*/OutputFile):-
+run(InputFile, VariablesOut/*OutputFile*/):-
 	tokenize(InputFile,Program),
 	parse(ParseTree,Program,[]),
-	evaluate(ParseTree,[],VariablesOut), 
-	output_result(OutputFile,ParseTree,VariablesOut).
+	evaluate(ParseTree,[],VariablesOut)%, 
+	/*output_result(OutputFile,ParseTree,VariablesOut)*/.
 
 output_result(OutputFile,ParseTree,Variables):- 
 	open(OutputFile,write,OutputStream),

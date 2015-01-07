@@ -8,10 +8,10 @@ evaluate(ParseTree, ToCalculate, VariablesIn /*Evaluation*/):-
 interpret(assign(Id, Op, Expr, End)) --> 
 	interpret(Id),
 	%[=],
-	interpret(Op),
-	interpret(Expr),
+	interpret(Op)%,
+	%interpret(Expr),
 	%[;].
-	interpret(End).
+	/*interpret(End)*/.
 
 interpret(opAssign(Op)) --> [Op].
 interpret(assignEnd(Op)) --> [Op].
@@ -62,5 +62,5 @@ interpret(factor(LP, Expr, RP)) -->
 	interpret(RP).
 	%[')'].
 
-interpret(id(Id)) -->
+interpret(ident(Id)) -->
 	[Id].
