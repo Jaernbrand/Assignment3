@@ -1,7 +1,7 @@
 
 %parse(assign()) --> assign().
 
-parse(assign(Ident, Op, Token, End) --> 
+parse(assign(Ident, Op, Token, End)) --> 
 	ident(Ident), 
 	assign_op(Op), 
 	expr(Token), 
@@ -51,7 +51,7 @@ factor(factor(LP, Token, RP)) -->
 	right_paren(RP).
 
 left_paren('(') --> ['(']. 
-right_Paren(')') --> [')']. 
+right_paren(')') --> [')']. 
 
 ident(ident(Head), [Head | Tail], Tail) :- 
 	validate_id(Head).	
