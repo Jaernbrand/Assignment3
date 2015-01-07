@@ -4,27 +4,23 @@
 evaluate(ParseTree, In, Eval):-
 	interpret(ParseTree, Eval, VariablesIn, VariablesOut).
 
-interpret(assign(Id, Op, Expr, End), [IdName, Eval | []]) --> 
+interpret(assignment(Id, Op, Expr, End), [IdName, Eval | []]) --> 
 	interpret(Id, IdName),
 	[=],
-	%interpret(Op),
 	interpret(Expr, Eval),
 	[;].
-	%interpret(End).
 
-interpret(expr(Term), Eval) --> interpret(Term, Eval).
+interpret(expression(Term), Eval) --> interpret(Term, Eval).
 
-interpret(expr(Term, Op, Expr), Eval) --> 
+interpret(expression(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
 	interpret_add(Op),
-	%[+],
 	interpret(Expr, Val2),
 	{Eval is Val1 + Val2}.
 
-interpret(expr(Term, Op, Expr), Eval) --> 
+interpret(expression(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
 	interpret_sub(Op),
-	%[-],
 	interpret(Expr, Val2),
 	{Eval is Val1 - Val2}.
 
@@ -33,21 +29,17 @@ interpret(term(Factor), Eval) --> interpret(Factor, Eval).
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
 	interpret_mult(Op),
-	%[*],
 	interpret(Term, Val2),
 	{Eval is Val1 * Val2}.
 
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
 	interpret_div(Op),
-	%[/],
 	interpret(Term, Val2),
 	{Eval is Val1 / Val2}.
 
-interpret(factor(T), T) --> 
-	%interpret(T).
-	[T],
-	{number(T)}.
+interpret(factor(T), Eval) --> 
+	interpret(T, Eval).
 
 interpret(int(I), I) --> 
 	[I],
@@ -55,29 +47,26 @@ interpret(int(I), I) -->
 
 interpret(factor(LP, Expr, RP), Eval) -->
 	['('],
-	%interpret(LP),
 	interpret(Expr, Eval),
-	%interpret(RP).
 	[')'].
 
 interpret(ident(Id), Id) -->
 	[Id].
 	
-interpret_sub(sub_op(SUB)) -->
-	[SUB].
+interpret_sub(sub_op) -->
+	[-].
 	
-interpret_add(add_op(ADD)) -->
-	[ADD].
+interpret_add(add_op) -->
+	[+].
 	
-interpret_div(div_op(DIV)) -->
-	[DIV].
+interpret_div(div_op) -->
+	[/].
 
-interpret_mult(mult_op(MULT)) -->
-	[MULT].
+interpret_mult(mult_op) -->
+	[*].
 
 interpret_lp(left_paren(P)) -->
 	['('].
 
 interpret_rp(right_paren(P)) -->
 	[')'].
-

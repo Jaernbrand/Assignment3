@@ -68,17 +68,3 @@ write_list(Stream,[Ident, Value|Vars]):-
 	nl(Stream), 
 	write_list(Stream,Vars).
 	
-/***
-parse(-ParseTree)-->
-	TODO: Implement a definite clause grammar defining our programming language,
-	and returning a parse tree.
-***/
-
-	
-/***
-evaluate(+ParseTree,+VariablesIn,-VariablesOut):-
-	TODO: Implement an evaluate predicate that evaluates a parse-tree and 
-	returns the state of the program after evaluation as a list of variables and 
-	their values.
-***/
-
