@@ -1,17 +1,16 @@
 
 :- [parser2].
 
-evaluate(ParseTree, ToCalculate, VariablesIn /*Evaluation*/):-
-	interpret(ParseTree, VariablesIn, ToCalculate)/*,
-	calculate(ToCalculate, Evaluation)*/.
+evaluate(ParseTree, In, Eval):-
+	interpret(ParseTree, Eval, VariablesIn, VariablesOut).
 
-interpret(assign(Id, Op, Expr, End)) --> 
+interpret(assign(Id, Op, Expr, End), [Id, Eval]) --> 
 	interpret(Id),
 	[=],
 	%interpret(Op),
-	interpret(Expr),
+	interpret(Expr, Eval),
 	[;].
-	interpret(End).
+	%interpret(End).
 
 interpret(opAssign(Op)) --> [Op].
 interpret(assignEnd(Op)) --> [Op].
@@ -20,45 +19,49 @@ interpret(termOperator(Op)) --> [Op].
 interpret(leftParen(Op)) --> [Op].
 interpret(rightParen(Op)) --> [Op].
 
-interpret(expr(Term)) --> interpret(Term).
+interpret(expr(Term), Eval) --> interpret(Term, Eval).
 
-interpret(expr(Term, Op, Expr)) --> 
-	interpret(Term),
+interpret(expr(Term, Op, Expr), Eval) --> 
+	interpret(Term, Val1),
 	[+],
 	%interpret(Op),
-	interpret(Expr).
+	interpret(Expr, Val2),
+	{Eval is Val1 + Val2}.
 
-interpret(expr(Term, Op, Expr)) --> 
-	interpret(Term),
+interpret(expr(Term, Op, Expr), Eval) --> 
+	interpret(Term, Val1),
 	[-],
-	interpret(Expr).
+	interpret(Expr, Val2),
+	{Eval is Val1 - Val2}.
 
-interpret(term(Factor)) --> interpret(Factor).
+interpret(term(Factor), Eval) --> interpret(Factor, Eval).
 
-interpret(term(Factor, Op, Term)) --> 
-	interpret(Factor),
+interpret(term(Factor, Op, Term), Eval) --> 
+	interpret(Factor, Val1),
 	[*],
 	%interpret(Op),
-	interpret(Term).
+	interpret(Term, Val2),
+	{Eval is Val1 * Val2}.
 
-interpret(term(Factor, Op, Term)) --> 
-	interpret(Factor),
+interpret(term(Factor, Op, Term), Eval) --> 
+	interpret(Factor, Val1),
 	[/],
-	interpret(Term).
+	interpret(Term, Val2),
+	{Eval is Val1 / Val2}.
 
-interpret(factor(T)) --> 
+interpret(factor(T), T) --> 
 	%interpret(T).
 	[T],
 	{number(T)}.
 
-interpret(int(I)) --> 
+interpret(int(I), I) --> 
 	[I],
 	{number(I)}.
 
-interpret(factor(LP, Expr, RP)) -->
+interpret(factor(LP, Expr, RP), Eval) -->
 	['('],
 	%interpret(LP),
-	interpret(Expr),
+	interpret(Expr, Eval),
 	%interpret(RP).
 	[')'].
 
