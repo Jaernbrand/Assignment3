@@ -5,14 +5,14 @@ parse(ReturnNode, Lexemes, AssignTail) :-
 
 assign(Lexemes, [assignment, IdNode, AssignSignNode, ExprNode, AssignEndNode], EndTail) :- 
 	id(Lexemes, IdNode, IdTail),
-	assignSign(IdTail, AssignSignNode, SignTail), 
+	assign_op(IdTail, AssignSignNode, SignTail), 
 	expr(SignTail, ExprNode, ExprTail), 
-	assignEnd(ExprTail, AssignEndNode, EndTail).
+	semicolon(ExprTail, AssignEndNode, EndTail).
 
-assignSign([L | Lexemes], ['='], Lexemes) :-
+assign_op([L | Lexemes], ['='], Lexemes) :-
 	atom(L),
 	atom_codes(L, [C | Codes]), C == 61. % 61 = '=' 
-assignEnd([L | Lexemes], [';'], Lexemes) :- 
+semicolon([L | Lexemes], [';'], Lexemes) :- 
 	atom(L),
 	atom_codes(L, [C | Codes]), C == 59. % 59 = ';' 
 
@@ -21,13 +21,18 @@ expr(Lexemes, [TermNode], TermTail) :-
 
 expr(Lexemes, [TermNode, OpNode, ExprNode], ExprTail) :- 
 	term(Lexemes, TermNode, TermTail),
-	exprOperator(TermTail, OpNode, OpTail),
+	add_op(TermTail, OpNode, OpTail),
 	expr(OpTail, ExprNode, ExprTail).
 
-exprOperator([L | Lexemes], ['+'], Lexemes) :-
+expr(Lexemes, [TermNode, OpNode, ExprNode], ExprTail) :- 
+	term(Lexemes, TermNode, TermTail),
+	sub_op(TermTail, OpNode, OpTail),
+	expr(OpTail, ExprNode, ExprTail).
+
+add_op([L | Lexemes], ['+'], Lexemes) :-
 	atom(L), 
 	atom_codes(L, [C | Codes]), C == 43. % 43 = '+' 
-exprOperator([L | Lexemes], ['-'], Lexemes) :-
+sub_op([L | Lexemes], ['-'], Lexemes) :-
 	atom(L),
 	atom_codes(L, [C | Codes]), C == 45. % 45 = '-' 
 
