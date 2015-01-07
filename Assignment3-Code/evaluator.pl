@@ -6,25 +6,21 @@ evaluate(ParseTree, In, Eval):-
 
 interpret(assign(Id, Op, Expr, End), [IdName, Eval | []]) --> 
 	interpret(Id, IdName),
-	[=],
-	%interpret(Op),
+	interpret_assign_op(Op),
 	interpret(Expr, Eval),
-	[;].
-	%interpret(End).
+	interpret_semicolon(End).
 
 interpret(expr(Term), Eval) --> interpret(Term, Eval).
 
 interpret(expr(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
 	interpret_add(Op),
-	%[+],
 	interpret(Expr, Val2),
 	{Eval is Val1 + Val2}.
 
 interpret(expr(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
 	interpret_sub(Op),
-	%[-],
 	interpret(Expr, Val2),
 	{Eval is Val1 - Val2}.
 
@@ -33,14 +29,12 @@ interpret(term(Factor), Eval) --> interpret(Factor, Eval).
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
 	interpret_mult(Op),
-	%[*],
 	interpret(Term, Val2),
 	{Eval is Val1 * Val2}.
 
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
 	interpret_div(Op),
-	%[/],
 	interpret(Term, Val2),
 	{Eval is Val1 / Val2}.
 
@@ -54,14 +48,18 @@ interpret(int(I), I) -->
 	{number(I)}.
 
 interpret(factor(LP, Expr, RP), Eval) -->
-	['('],
-	%interpret(LP),
+	interpret_lp(LP),
 	interpret(Expr, Eval),
-	%interpret(RP).
-	[')'].
+	interpret_rp(RP).
 
 interpret(ident(Id), Id) -->
 	[Id].
+
+interpret_assign_op(assign_op(Op)) -->
+	[Op].
+
+interpret_semicolon(semicolon(Semi)) -->
+	[Semi].
 	
 interpret_sub(sub_op(SUB)) -->
 	[SUB].
