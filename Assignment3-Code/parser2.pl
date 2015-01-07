@@ -2,7 +2,7 @@
 %parse(assign()) --> assign().
 
 parse(assign(Ident, Op, Token, End)) --> 
-	id(Ident), 
+	ident(Ident), 
 	opAssign(Op), 
 	expr(Token), 
 	assignEnd(End).
@@ -43,8 +43,8 @@ factor(factor(LP, Token, RP)) -->
 leftParen('(') --> ['(']. 
 rightParen(')') --> [')']. 
 
-id(Ident, [Ident | Tail], Tail) :- 
-	validate_id(Ident).	
+ident(ident(Head), [Head | Tail], Tail) :- 
+	validate_id(Head).	
 
 validate_id(L):-
 	atom_codes(L, Code),
