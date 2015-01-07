@@ -23,14 +23,15 @@ interpret(expr(Term), Eval) --> interpret(Term, Eval).
 
 interpret(expr(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
-	[+],
-	%interpret(Op),
+	interpret(add_op(Op)),
+	%[+],
 	interpret(Expr, Val2),
 	{Eval is Val1 + Val2}.
 
 interpret(expr(Term, Op, Expr), Eval) --> 
 	interpret(Term, Val1),
-	[-],
+	interpret(sub_op(Op)),
+	%[-],
 	interpret(Expr, Val2),
 	{Eval is Val1 - Val2}.
 
@@ -38,14 +39,15 @@ interpret(term(Factor), Eval) --> interpret(Factor, Eval).
 
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
-	[*],
-	%interpret(Op),
+	interpret(mult_op(Op)),
+	%[*],
 	interpret(Term, Val2),
 	{Eval is Val1 * Val2}.
 
 interpret(term(Factor, Op, Term), Eval) --> 
 	interpret(Factor, Val1),
-	[/],
+	interpret(div_op(Op)),
+	%[/],
 	interpret(Term, Val2),
 	{Eval is Val1 / Val2}.
 
@@ -67,3 +69,15 @@ interpret(factor(LP, Expr, RP), Eval) -->
 
 interpret(ident(Id)) -->
 	[Id].
+	
+interpret(sub_op(SUB)) -->
+	[SUB].
+	
+interpret(add_op(ADD)) -->
+	[ADD].
+	
+interpret(div_op(DIV)) -->
+	[DIV].
+
+interpret(mult_op(MULT)) -->
+	[MULT].
