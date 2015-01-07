@@ -7,9 +7,9 @@ parse(assign(Ident, Op, Token, End)) -->
 	expr(Token), 
 	semicolon(End).
 
-assign_op('=') --> [=].
+assign_op(assign_op('=')) --> [=].
 
-semicolon(';') --> [;]. 
+semicolon(semicolon(';')) --> [;]. 
 
 expr(expr(Token)) --> 
 	term(Token).
@@ -24,8 +24,8 @@ expr(expr(TermToken, Op, ExprToken)) -->
 	sub_op(Op),
 	expr(ExprToken).
 
-add_op('+') --> [+].
-sub_op('-') --> [-].
+add_op(add_op('+')) --> [+].
+sub_op(sub_op('-')) --> [-].
 
 term(term(Token)) --> 
 	factor(Token).
@@ -40,8 +40,8 @@ term(term(FactorToken, Op, TermToken)) -->
 	div_op(Op),
 	term(TermToken).
 
-mult_op('*') --> [*]. 
-div_op('/') --> [/].
+mult_op(mult_op('*')) --> [*]. 
+div_op(div_op('/')) --> [/].
 
 factor(factor(N)) --> 
 	int(N).
@@ -50,8 +50,8 @@ factor(factor(LP, Token, RP)) -->
 	expr(Token), 
 	right_paren(RP).
 
-left_paren('(') --> ['(']. 
-right_paren(')') --> [')']. 
+left_paren(left_paren('(')) --> ['(']. 
+right_paren(right_paren(')')) --> [')']. 
 
 ident(ident(Head), [Head | Tail], Tail) :- 
 	validate_id(Head).	
