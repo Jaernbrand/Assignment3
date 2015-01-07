@@ -1,10 +1,10 @@
 
 :- [parser2].
 
-evaluate(ParseTree, VariablesOut, [Eval | VariablesIn]):-
+evaluate(ParseTree, In, Eval):-
 	interpret(ParseTree, Eval, VariablesIn, VariablesOut).
 
-interpret(assign(Id, Op, Expr, End), [IdName, =, Eval]) --> 
+interpret(assign(Id, Op, Expr, End), [IdName, Eval | []]) --> 
 	interpret(Id, IdName),
 	[=],
 	%interpret(Op),

@@ -61,7 +61,7 @@ writeln(Stream,Term):-
 	nl(Stream).
 	
 write_list(_Stream,[]). 
-write_list(Stream,[Ident = Value|Vars]):-
+write_list(Stream,[Ident, Value|Vars]):-
 	write(Stream,Ident),
 	write(Stream,' = '),
 	format(Stream,'~1f',Value), 
