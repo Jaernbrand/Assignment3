@@ -1,22 +1,46 @@
 
 evaluate(ParseTree, VariablesIn, ToCalculate/*Evaluation*/):-
-	traverseTree(ParseTree, [], ToCalculate)/*,
+	interpret(ParseTree, VariablesIn, ToCalculate)/*,
 	calculate(ToCalculate, Evaluation)*/.
 
-traverseTree(Term, CalcIn, [Term | CalcIn]) :-
-	functor(Term, Name, 0).
+interpret(assign(Id, Op, Expr, End)) --> 
+	interpret(Id)/*,
+	[=],
+	interpret(Expr),
+	[;]*/.
 
-traverseTree(Term, CalcIn, CalcOut) :-
-	functor(Term, Name, Arity),
-	Arity > 0,
-	visitChildren(Term, 1, Arity, CalcIn, CalcOut).
-	
-visitChildren(Term, I, I, CalcIn, CalcOut):-
-	arg(ArgIndex, Term, ArgOut),
-	traverseTree(ArgOut, CalcIn, CalcOut).
+interpret(expr(Term)) --> interpret(Term).
 
-visitChildren(Term, ArgIndex, Arity, CalcIn, CalcOut) :-
-	arg(ArgIndex, Term, ArgOut),
-	traverseTree(ArgOut, CalcIn, CalcList),
-	NextIndex is ArgIndex + 1,
-	visitChildren(Term, NextIndex, Arity, CalcList, CalcOut).
+interpret(expr(Term, Op, Expr)) --> 
+	interpret(Term),
+	[+],
+	interpret(Expr).
+
+interpret(expr(Term, Op, Expr)) --> 
+	interpret(Term),
+	[-],
+	interpret(Expr).
+
+interpret(term(Factor)) --> interpret(Facor).
+
+interpret(term(Factor, Op, Term)) --> 
+	interpret(Factor),
+	[*],
+	interpret(Term).
+
+interpret(term(Factor, Op, Term)) --> 
+	interpret(Factor),
+	[/],
+	interpret(Term).
+
+interpret(factor(T)) --> 
+	[T],
+	{number(T)}.
+
+interpret(factor(LP, Expr, RP)) -->
+	['('],
+	interpret(Expr),
+	[')'].
+
+interpret(id(Id)) -->
+	[Id].
